@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toy Dəvətnaməsi - İmaməli & Zülfiyyə</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .font-serif-custom { font-family: 'Cinzel', serif; }
+    .font-cursive { font-family: 'Great Vibes', cursive; }
+    .font-sans-custom { font-family: 'Montserrat', sans-serif; }
+    #petal-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+    }
+  </style>
+</head>
+<body class="bg-[#120307] text-[#e0c38c] font-sans-custom min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
+
+  <!-- Animasiya üçün Canvas -->
+  <canvas id="petal-canvas"></canvas>
+
+  <!-- Arxa Fon Musiqisi -->
+  <audio id="bg-music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-113824.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Musiqi İdarə Etmə Düyməsi -->
+  <button id="music-btn" onclick="toggleMusic()" class="hidden fixed top-4 right-4 z-50 bg-[#2a0812] border border-[#d4af37]/50 text-[#d4af37] p-3 rounded-full shadow-lg hover:scale-105 transition">
+    <span id="music-icon">🎵</span>
+  </button>
+
+  <!-- ZƏRF BÖLMƏSİ (Başlanğıc) -->
+  <div id="envelope-container" class="w-full max-w-md mx-auto text-center cursor-pointer z-10" onclick="openEnvelope()">
+    <div class="relative bg-[#2a0812] border border-[#d4af37]/40 rounded-xl p-8 shadow-2xl shadow-red-950/50 overflow-hidden hover:border-[#d4af37] transition duration-300">
+      <div class="my-12">
+        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-[#8b0000] to-[#d4af37] p-0.5 shadow-lg flex items-center justify-center mb-6">
+          <div class="w-full h-full bg-[#1a040a] rounded-full flex items-center justify-center border border-[#d4af37]/30">
+            <span class="font-cursive text-2xl text-[#d4af37]">İ & Z</span>
+          </div>
+        </div>
+        <h2 class="font-serif-custom text-xl tracking-widest text-[#f3e5ab] mb-2">TOY DƏVƏTNAMƏSİ</h2>
+        <p class="font-cursive text-3xl text-[#d4af37]">İmaməli & Zülfiyyə</p>
+      </div>
+
+      <p class="text-xs tracking-widest text-[#d4af37]/70 uppercase animate-pulse mt-8">
+        ✉️ Dəvətnaməni açmaq üçün toxunun
+      </p>
+    </div>
+  </div>
+
+  <!-- DƏVƏTNAMƏ KART BÖLMƏSİ -->
+  <div id="invitation-card" class="hidden w-full max-w-md mx-auto bg-[#fdfbf7] text-[#2c221e] rounded-2xl p-6 sm:p-8 shadow-2xl border-2 border-[#d4af37]/30 my-6 z-10">
+    
+    <div class="text-center mb-6">
+      <p class="font-serif-custom text-sm tracking-wider text-[#8b6f39] font-semibold mb-3">
+        BİSMİLLAHİR-RƏHMANİR-RƏHİM
+      </p>
+      <p class="font-serif-custom italic text-xs sm:text-sm text-[#5a4827] px-4 leading-relaxed">
+        "Sevgi bir-birinə baxmaq deyil, bərabər eyni tərəfə baxmaqdır."
+      </p>
+    </div>
+
+    <div class="text-center my-6">
+      <p class="text-xs sm:text-sm leading-relaxed text-[#4a3b2c]">
+        Hörmətli qonağımız! Həyatımızın bu əsas və müqəddəs gününü sizinlə paylaşmaqdan şərəf duyarıq.
+      </p>
+    </div>
+
+    <div class="text-center my-6">
+      <h1 class="font-cursive text-5xl sm:text-6xl text-[#8b6f39]">İmaməli</h1>
+      <span class="font-serif-custom text-xl text-[#d4af37] my-1 block">&</span>
+      <h1 class="font-cursive text-5xl sm:text-6xl text-[#8b6f39]">Zülfiyyə</h1>
+    </div>
+
+    <!-- GERİ SAYIM SAYĞACI -->
+    <div class="my-6 bg-[#f9f5ec] p-4 rounded-xl border border-[#d4af37]/30 text-center">
+      <p class="font-serif-custom text-xs text-[#8b6f39] tracking-widest uppercase mb-2">Toy gününə qaldı</p>
+      <div id="countdown" class="grid grid-cols-4 gap-2 text-[#2c221e]">
+        <div class="bg-white p-2 rounded-lg border border-[#d4af37]/20">
+          <span id="days" class="font-bold text-lg block">00</span>
+          <span class="text-[10px] text-[#6b5a4b] uppercase">Gün</span>
+        </div>
+        <div class="bg-white p-2 rounded-lg border border-[#d4af37]/20">
+          <span id="hours" class="font-bold text-lg block">00</span>
+          <span class="text-[10px] text-[#6b5a4b] uppercase">Saat</span>
+        </div>
+        <div class="bg-white p-2 rounded-lg border border-[#d4af37]/20">
+          <span id="minutes" class="font-bold text-lg block">00</span>
+          <span class="text-[10px] text-[#6b5a4b] uppercase">Dəq</span>
+        </div>
+        <div class="bg-white p-2 rounded-lg border border-[#d4af37]/20">
+          <span id="seconds" class="font-bold text-lg block">00</span>
+          <span class="text-[10px] text-[#6b5a4b] uppercase">San</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-[#d4af37]/30 my-6">
+
+    <div class="space-y-4 text-center font-sans-custom">
+      <div class="bg-[#f9f5ec] p-4 rounded-xl border border-[#d4af37]/20">
+        <p class="font-serif-custom text-xs text-[#8b6f39] tracking-widest uppercase mb-1">Tarix və Saat</p>
+        <p class="font-bold text-base text-[#2c221e]">23 Yanvar 2027, Saat 18:00</p>
+      </div>
+
+      <div class="bg-[#f9f5ec] p-4 rounded-xl border border-[#d4af37]/20">
+        <p class="font-serif-custom text-xs text-[#8b6f39] tracking-widest uppercase mb-1">Məkan</p>
+        <p class="font-bold text-base text-[#2c221e]">Sultan Şadlıq Sarayı</p>
+        <p class="text-xs text-[#6b5a4b] mt-1">Bakı ş., 8-ci km qəsəbəsi, Çobanzadə küç. 23</p>
+      </div>
+    </div>
+
+    <!-- MƏKANA YÖNLƏNDİRMƏ (Waze & Bolt) -->
+    <div class="mt-6">
+      <p class="font-serif-custom text-center text-xs text-[#8b6f39] tracking-widest uppercase mb-3">
+        Ünvana Keçid Və Naviqasiya
+      </p>
+      <div class="grid grid-cols-2 gap-3">
+        <a href="https://waze.com/ul?q=Sultan%20Sadliq%20Sarayi%20Baku" target="_blank" 
+           class="bg-[#33ccff] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition">
+          <span>🚗 Waze ilə get</span>
+        </a>
+        <a href="https://bolt.eu" target="_blank" 
+           class="bg-[#34d399] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition">
+          <span>🚕 Bolt taksi çağır</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- İŞTİRAK TƏSDİQİ (RSVP) -->
+    <div class="mt-8 pt-6 border-t border-[#d4af37]/30 text-center">
+      <p class="font-serif-custom text-xs text-[#8b6f39] tracking-widest uppercase mb-2">İştirakınızı Təsdiqləyin</p>
+      <p class="text-xs text-[#6b5a4b] mb-3">Zəhmət olmasa toya gəlib-gəlməyəcəyinizi bizə bildirin</p>
+      <a href="https://wa.me/994500000000?text=Salam!%20İmaməli%20və%20Zülfiyyənin%20toyunda%20iştirak%20edəcəyəm." target="_blank" 
+         class="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-medium text-xs py-3 px-6 rounded-xl shadow-md transition w-full">
+        💬 WhatsApp ilə Təsdiq Et
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    const music = document.getElementById('bg-music');
+    let isPlaying = false;
+
+    function openEnvelope() {
+      document.getElementById('envelope-container').classList.add('hidden');
+      document.getElementById('invitation-card').classList.remove('hidden');
+      document.getElementById('music-btn').classList.remove('hidden');
+      
+      music.play().then(() => {
+        isPlaying = true;
+      }).catch(() => {
+        isPlaying = false;
+      });
+
+      startPetals();
+    }
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        document.getElementById('music-icon').innerText = '🔇';
+      } else {
+        music.play();
+        document.getElementById('music-icon').innerText = '🎵';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // Geri Sayım Məntiqi
+    const weddingDate = new Date("Jan 23, 2027 18:00:00").getTime();
+
+    const countdownTimer = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = weddingDate - now;
+
+      if (distance < 0) {
+        clearInterval(countdownTimer);
+        document.getElementById("countdown").innerHTML = "<p class='col-span-4 font-bold text-[#8b6f39]'>Toy Günü Gəldi!</p>";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+      document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+      document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+      document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+    }, 1000);
+
+    // Ləçək Yağışı Animasiyası (Canvas)
+    function startPetals() {
+      const canvas = document.getElementById('petal-canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const petals = [];
+      const numPetals = 25;
+
+      for (let i = 0; i < numPetals; i++) {
+        petals.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 8 + 4,
+          speedY: Math.random() * 1.5 + 0.8,
+          speedX: Math.random() * 1 - 0.5,
+          opacity: Math.random() * 0.6 + 0.4,
+          color: Math.random() > 0.5 ? '#d4af37' : '#e8b4b8'
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        petals.forEach(p => {
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.opacity;
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+
+          p.y += p.speedY;
+          p.x += p.speedX;
+
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  </script>
+</body>
+</html>
